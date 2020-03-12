@@ -21,9 +21,16 @@ struct List{
 
 List append(List lst, Node n) {
   Node head = lst.head;
-  while(head.next !=null){
+
+  if(head == null){
+    lst.head = n;
+    return lst;
+  }
+
+  while(head.next != null){
     head = head.next;
   }
+
   head.next = n;
   return lst;
 }
@@ -32,13 +39,12 @@ List insertAt(List lst, Node n, int pos) {
   Node head = lst.head;
 
   if(pos == 0){
-    n.next = lst.head;
+    n.next = head;
     lst.head = n;
     return lst;
   }
 
   assert(head != null);
-  Node prev = head;
 
   pos--;
 
@@ -60,7 +66,8 @@ List populate(List l) {
   // for providing input-output examples.
   // returns: 5 -> 60
   Node n2 = new Node(next = null, val = 60);
-  Node n1 = new Node(next = n2, val = 5);
+  Node n0 = new Node(next = n2, val = 5);
+  Node n1 = new Node(next = n0, val = 65);
   l.head = n1;
   return l;
 }
@@ -73,7 +80,7 @@ harness void testAppend(){
   // assert for append
   Node n1 = new Node(next = null, val = 40);
   List l1 = append(l, n1);
-  assert l1.head.next.next.val == 40;
+  assert l1.head.next.next.next.val == 40;
 }
 
 
@@ -81,8 +88,32 @@ harness void testInsert(){
   List l = new List();
   l = populate(l);
 
+  // test insert at 1
   Node n1 = new Node(next = null, val = 70);
   // assert for insertAt
   List l2 = insertAt(l, n1, 1);
   assert l2.head.next.val == 70;
+  assert l2.head.val == 65;
+  assert l2.head.next.next.val == 5;
+  assert l2.head.next.next.next.val == 60;
+
+  // test insert at 0 at front
+  Node n2 = new Node(next = null, val = 90);
+  l = new List();
+  l = populate(l);
+  l2 = insertAt(l, n2, 0);
+  assert l2.head.val == 90;
+  assert l2.head.next.val == 65;
+  assert l2.head.next.next.val == 5;
+  assert l2.head.next.next.next.val == 60;
+
+  // test insert at far end
+  Node n3 = new Node(next = null, val = 100);
+  l = new List();
+  l = populate(l);
+  l2 = insertAt(l, n3, 3);
+  assert l2.head.val == 65;
+  assert l2.head.next.val == 5;
+  assert l2.head.next.next.val == 60;
+  assert l2.head.next.next.next.val == 100;
 }

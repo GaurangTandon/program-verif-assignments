@@ -57,7 +57,7 @@ void insertAt(List* lst, Node* n, int pos_0, List*& _out) {
   Node*  head=NULL;
   head = lst->head;
   if ((pos_0) == (0)) {
-    n->next = lst->head;
+    n->next = head;
     lst->head = n;
     _out = lst;
     return;
@@ -77,6 +77,11 @@ void insertAt(List* lst, Node* n, int pos_0, List*& _out) {
 void append(List* lst, Node* n, List*& _out) {
   Node*  head=NULL;
   head = lst->head;
+  if ((head) == (NULL)) {
+    lst->head = n;
+    _out = lst;
+    return;
+  }
   bool  __sa0=(head->next) != (NULL);
   while (__sa0) {
     head = head->next;
