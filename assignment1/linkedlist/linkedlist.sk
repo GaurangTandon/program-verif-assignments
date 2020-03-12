@@ -36,22 +36,23 @@ List append(List lst, Node n) {
 }
 
 List insertAt(List lst, Node n, int pos) {
-  Node head = lst.head;
+  Node head = {| lst.head | lst.head.next |};
 
-  if(pos == 0){
+  if(pos == ??){
     n.next = head;
-    lst.head = n;
+    lst.head = {| lst.head | n | n.next |};
     return lst;
   }
 
   assert(head != null);
 
-  pos--;
+  int decrease = ??;
+  pos -= decrease;
 
-  while(pos > 0){
-    pos--;
+  while(pos > ??){
+    pos -= decrease;
     assert(head != null);
-    head = head.next;
+    head = {| head.next | head.next.next |};
   }
 
   n.next = head.next;
@@ -64,7 +65,7 @@ List insertAt(List lst, Node n, int pos) {
 List populate(List l) {
   // this function adds a few nodes to an empty list.  This is used
   // for providing input-output examples.
-  // returns: 5 -> 60
+  // returns: 65 -> 5 -> 60
   Node n2 = new Node(next = null, val = 60);
   Node n0 = new Node(next = n2, val = 5);
   Node n1 = new Node(next = n0, val = 65);
@@ -110,6 +111,16 @@ harness void testInsert(){
   assert l2.head.val == 90;
   assert l2.head.next.val == 65;
   assert l2.head.next.next.val == 5;
+  assert l2.head.next.next.next.val == 60;
+
+  // test insert somewhere between
+  Node n4 = new Node(next = null, val = 95);
+  l = new List();
+  l = populate(l);
+  l2 = insertAt(l, n4, 2);
+  assert l2.head.val == 65;
+  assert l2.head.next.val == 5;
+  assert l2.head.next.next.val == 95;
   assert l2.head.next.next.next.val == 60;
 
   // test insert at far end
