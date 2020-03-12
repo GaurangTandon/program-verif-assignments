@@ -51,5 +51,5 @@ def print_assertion():
 
 
 random.seed(42)
-for i in range(1):
+for i in range(20):
     print_assertion()
