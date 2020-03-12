@@ -81,6 +81,11 @@ harness void testAppend(){
   Node n1 = new Node(next = null, val = 40);
   List l1 = append(l, n1);
   assert l1.head.next.next.next.val == 40;
+
+  Node n0 = new Node(next = null, val = 45);
+  l = new List();
+  l = append(l, n0);
+  assert l.head.val == 45;
 }
 
 
