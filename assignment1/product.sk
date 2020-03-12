@@ -12,7 +12,7 @@ need to use generators to implement this function.
 To test your function, run the following command in your shell.
 
 -------------------------------------------------
-$ python3 run.py 1 product.sk                  
+$ python3 run.py 1 product.sk
 -------------------------------------------------
 
 If the compilation succeeds, you can see the resulting C++ code in the
@@ -21,7 +21,6 @@ file 'product.cpp'.
 
 
 int[M, Q] productSK(int M, int N, int P, int Q, int[M, N] a, int[P, Q] b) {
-  // your code here
 }
 
 
@@ -52,4 +51,5 @@ int[M, Q] product(int M, int N, int P, int Q, int[M, N] a, int[P, Q] b) {
 harness void multTest(){
 	assert product(3, 2, 2, 3, {{1,2}, {1, 5}, {3, 4}}, {{1,2,3}, {0, 2, 1}}) == {{1, 6, 5}, {1, 12, 8}, {3, 14, 13}};
 	assert productSK(3, 2, 2, 3, {{1,2}, {1, 5}, {3, 4}}, {{1,2,3}, {0, 2, 1}}) == {{1, 6, 5}, {1, 12, 8}, {3, 14, 13}};
+	assert productSK(3, 2, 1, 3, {{1,2}, {1, 5}, {3, 4}}, {{1,2,3}}) == {{1, 6, 5}, {1, 12, 8}, {3, 14, 13}};
 }
