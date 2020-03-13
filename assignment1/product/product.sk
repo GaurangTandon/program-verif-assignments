@@ -35,6 +35,7 @@ generator int[2] sizesGen(int[4] sizes, int i, int j){
 
   if(??) return {sizes[i], sizes[j]};
 
+  // should figure out i==3 and j==3 on its own
   if(!(i == ?? && j == ??)) return sizesGen(sizes, i, j + 1);
 
   return {0, 0};
@@ -47,10 +48,10 @@ int[M, Q] productSK(int M, int N, int P, int Q, int[M, N] a, int[P, Q] b) {
 
   int sum;
 
-  for (int i = 0; i < M; i++) {
-    for (int j = 0; j < Q; j++) {
+  for (int i = 0; i < {| M | N | P | Q |}; i++) {
+    for (int j = 0; j < {| M | N | P | Q |}; j++) {
 	    sum = ??;
-	    for (int k = 0; k < P; k++) {
+	    for (int k = 0; k < {| M | N | P | Q |}; k++) {
 		    sum += a[i, k] * b[k, j];
 		  }
 
