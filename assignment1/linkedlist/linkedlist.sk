@@ -35,6 +35,11 @@ List append(List lst, Node n) {
   return lst;
 }
 
+generator Node genie(Node h){
+  if(??) return h;
+  return genie(h.next);
+}
+
 List insertAt(List lst, Node n, int pos) {
   Node head = {| lst.head | lst.head.next |};
 
@@ -52,7 +57,7 @@ List insertAt(List lst, Node n, int pos) {
   while(pos > ??){
     pos -= decrease;
     assert(head != null);
-    head = {| head.next | head.next.next |};
+    head = genie(head);
   }
 
   {| n.next | n |} = head.next;
