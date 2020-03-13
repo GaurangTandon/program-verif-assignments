@@ -50,6 +50,6 @@ def print_assertion():
     print(s)
 
 
-random.seed(42)
+random.seed(54)
 for i in range(20):
     print_assertion()
