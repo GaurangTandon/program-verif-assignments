@@ -28,10 +28,10 @@ List append(List lst, Node n) {
   }
 
   while(head.next != null){
-    head = head.next;
+    head = {| head.next | head.next.next |};
   }
 
-  head.next = n;
+  head.next = {| head | n |};
   return lst;
 }
 
