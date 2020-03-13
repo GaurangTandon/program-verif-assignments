@@ -52,7 +52,7 @@ int[M, Q] productSK(int M, int N, int P, int Q, int[M, N] a, int[P, Q] b) {
     for (int j = 0; j < {| M | N | P | Q |}; j++) {
 	    sum = ??;
 	    for (int k = 0; k < {| M | N | P | Q |}; k++) {
-		    sum += a[i, k] * b[k, j];
+		    sum = sum + a[{| i | j | k |}, {| i | j | k |}] * b[{| i | j | k |},{| i | j | k |}];
 		  }
 
 	    prod[i][j] = sum;

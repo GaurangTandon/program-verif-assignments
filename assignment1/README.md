@@ -11,6 +11,7 @@ In addition to implementing the code with holes, I have also generated several t
 1. **Generator** for size of matrix product: suppose we don't know what the size of the product matrix should be, then we can use this generator to generate all possible pairs of dimensions for the matrix size and then Sketch will itself figure out which size should be used.
 2. **Constant hole**: placed at `sum = ??`, since we might not know what the initial value of sum should be.
 3. **3 Regex holes**: if you do not know what the three limits of the three loops are, you can just replace the limit by `{| M | N | P | Q |}` and let Sketch figure out the answer.
+4. **4 Regex holes**: if you do not remember which terms from a and b matrices to multiply, you can simply write `a[{| i | j | k |}, {| i | j | k |}]` and let Sketch figure out.
 
 ## Linkedlist.sk
 
