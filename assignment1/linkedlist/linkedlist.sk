@@ -55,8 +55,8 @@ List insertAt(List lst, Node n, int pos) {
     head = {| head.next | head.next.next |};
   }
 
-  n.next = head.next;
-  head.next = n;
+  {| n.next | n |} = head.next;
+  head.next = {| n.next | n |};
   return lst;
 }
 
