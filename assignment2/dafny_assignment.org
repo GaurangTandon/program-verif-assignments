@@ -295,7 +295,87 @@ syntax.
 
 *** Fibonacci Iterative Program
  #+BEGIN_SRC dafny :tangle q1.dfy
+/**
+ * Assuminig  
+ * F_1 = 0
+ * F_2 = 1
+*/
 
+	
+// using nat datatype since fibonacci is always positive
+datatype StateSpace = StateSpace(n: nat, a: nat, b: nat)
+
+function fib(n: nat) : nat
+		requires n >= 1
+		decreases n
+{
+	if (n == 1) then 0 else if (n == 2) then 1 else fib(n - 1) + fib(n - 2)
+}
+
+method FibonacciTransitions(initialState: StateSpace) returns (finalState: StateSpace)
+	requires initialState.n >= 1
+	requires initialState.a == 0
+	requires initialState.b == 1
+	ensures finalState.n == 1
+	ensures finalState.a == fib(initialState.n)
+	ensures finalState.b == fib(initialState.n + 1)
+{
+	var n := initialState.n;
+	var a := initialState.a;
+	var b := initialState.b;
+
+	var i := 1;
+	var nOrg := n + 1;
+
+	while n > 1
+		// loop measure
+		decreases n
+		invariant n >= 1
+		// we need to help Dafny get sense of
+		// the fact that i == nOrg on loop exit
+		// so that it is sure that a == fib(nOrg)
+		// on exit
+		invariant n + i == nOrg;
+
+		// necessary loop condition
+		invariant a == fib(i)
+		invariant b == fib(i + 1)
+	{
+		a, b := b, a + b;
+		n := n - 1;
+		i := i + 1;
+	}
+
+	// just sanity checks
+	assert n == 1;
+	assert i == nOrg - 1;
+
+	finalState := StateSpace(n, a, b);
+}
+
+
+function method pi(state: StateSpace): nat
+	requires state.n == 1
+{
+	state.a
+}
+
+function method rho(n: nat) : StateSpace
+{
+	StateSpace(n, 0, 1)
+}
+
+method Main(){
+	assert fib(1) == 0;
+	assert fib(2) == 1;
+
+	var n := 10;
+	var initialState := rho(n);
+	var finalState := FibonacciTransitions(initialState);
+	var answer := pi(finalState);
+
+	assert answer == 34;
+}
  #+END_SRC
 
 *** Pre Conditions
@@ -348,8 +428,55 @@ syntax.
     
 
 *** Fibonacci Recursive Program
- #+BEGIN_SRC :tangle
+ #+BEGIN_SRC dafny :tangle q2.dfy
+// using nat datatype since fibonacci is always positive
+datatype StateSpace = StateSpace(n: nat, i: nat, a: nat, b: nat)
 
+function fib(n: nat) : nat
+	requires n >= 1
+decreases n
+{
+	if (n == 1) then 0 else if (n == 2) then 1 else fib(n - 1) + fib(n - 2)
+}
+
+method FibonacciTransitions(currState: StateSpace) returns (finalState: StateSpace)
+	decreases currState.n - currState.i
+	requires 1 <= currState.i <= currState.n
+	requires currState.a == fib(currState.i)
+	requires currState.b == fib(currState.i + 1)
+	ensures finalState.n == finalState.i
+	ensures finalState.a == fib(currState.n)
+	ensures finalState.b == fib(currState.n + 1)
+{
+	var n, i, a, b := currState.n, currState.i, currState.a, currState.b;
+
+	if(i == n) {
+		finalState := currState;
+	} else {
+		var nextState := StateSpace(n, i + 1, b, a + b);
+		finalState := FibonacciTransitions(nextState);
+	}
+}
+
+function method pi(state: StateSpace): nat
+{
+	state.a
+}
+
+function method rho(n: nat) : StateSpace
+	requires n >= 1
+{
+	StateSpace(n, 1, 0, 1)
+}
+
+method Main(){
+	var n := 10;
+	var initialState := rho(n);
+	var finalState := FibonacciTransitions(initialState);
+	var answer := pi(finalState);
+
+	assert answer == 34;
+}
  #+END_SRC
 
 *** Pre Conditions
@@ -396,8 +523,113 @@ syntax.
 10. $h:X \rightarrow Y$, where $h: X \rightarrow \mathbb{Z}^\mathbb{N}$
 
 *** Bubble Sort Program
- #+BEGIN_SRC :tangle
+ #+BEGIN_SRC dafny :tangle q3.dfy
+// both start and end are indices in the array
+predicate sorted(arr: array<int>, start: int, end: int)
+	reads arr
+	requires 0 <= start <= end < arr.Length
+{
+	forall idx :: start <= idx < end ==> arr[idx] <= arr[idx + 1]
+}
 
+// all elements below idx must be smaller than those above
+// and all elmeents above idx must be sorted themselves
+predicate sortedAtIndex(arr: array<int>, idx: int)
+	reads arr
+{
+	forall x, y :: (0 <= x < idx && idx <= y < arr.Length) ==> arr[x] <= arr[y]
+}
+
+datatype StateSpace = StateSpace(arr: array<int>, pass: int)
+
+	// since `arr` was not declared as array?<int>, it will always have
+	// non-null type
+	method BubbleSortStateTransition(state: StateSpace) returns (finalState: StateSpace)
+		requires state.arr.Length >= 1
+		requires state.pass == state.arr.Length
+		ensures finalState.pass == 1
+		ensures finalState.arr.Length == state.arr.Length
+		ensures sorted(finalState.arr, 0, finalState.arr.Length - 1)
+	{
+		var n := state.arr.Length;
+		var newArr := new int[n];
+		
+		var i := 0;
+		while i < n
+			invariant i <= newArr.Length
+			invariant forall j :: 0 <= j < i ==> newArr[j] == state.arr[j]
+		{
+			newArr[i] := state.arr[i];
+			i := i + 1;
+		}
+		assert forall i :: 0 <= i < n ==> newArr[i] == state.arr[i];
+
+		// bubble sort for n elements array
+		// requires n-1 passes
+
+		// index above which all heaviest elements are already collected and sorted
+		var sortedAbove := state.pass;
+
+		// stops once sortedAbove == 1
+		// i.e., all elements above and including 1 are sorted
+		// that implies zero-th element is automatically sorted
+		while sortedAbove >= 2
+				invariant 0 <= sortedAbove <= n
+				invariant sortedAtIndex(newArr, sortedAbove)
+				invariant sortedAbove < n ==> sorted(newArr, sortedAbove, n - 1)
+		{
+			var idx := 0;
+			var farthestIdx := sortedAbove - 2;
+
+			while idx <= farthestIdx
+				invariant 0 <= idx <= farthestIdx + 1
+				invariant sortedAbove < n ==> sorted(newArr, sortedAbove, n - 1)
+				invariant sortedAtIndex(newArr, sortedAbove)
+				invariant forall x :: 0 <= x <= idx ==> newArr[x] <= newArr[idx]
+			{
+				if(newArr[idx] > newArr[idx + 1])
+				{
+					newArr[idx], newArr[idx + 1] := newArr[idx + 1], newArr[idx];
+				}
+
+				assert newArr[idx] <= newArr[idx + 1];
+				idx := idx + 1;
+			}
+
+			sortedAbove := sortedAbove - 1;
+
+			assert sortedAbove < n - 1 ==> newArr[sortedAbove] <= newArr[sortedAbove + 1];
+			assert forall x :: 0 <= x < sortedAbove ==> newArr[x] <= newArr[sortedAbove];
+		}
+
+		finalState := StateSpace(newArr, 1);
+	}
+
+	function method rho(arr: array<int>) : StateSpace {
+		StateSpace(arr, arr.Length)
+	}
+
+	function method pi(state: StateSpace) : array<int>
+		reads state.arr
+	{
+		state.arr
+	}
+
+	method Main(){
+		var arr := new int[5];
+		arr[0], arr[1], arr[2], arr[3], arr[4] := 4, 2, 3, 1, 6;
+
+		var sts := rho(arr);
+		var sts2 := BubbleSortStateTransition(sts);
+		var sortedArr := pi(sts2);
+
+		var i := 0;
+		while i < sortedArr.Length {
+			print sortedArr[i];
+			i := i + 1;
+		}
+		assert sorted(sortedArr, 0, sortedArr.Length - 1);
+	}
  #+END_SRC
 
 *** Pre Conditions
