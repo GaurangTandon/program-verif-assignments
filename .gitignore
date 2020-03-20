@@ -2,3 +2,5 @@
 assignment1/linkedlist.*
 assignment1/product.*
 *~
+*.exe*
+*.bpl

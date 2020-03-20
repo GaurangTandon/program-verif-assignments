@@ -58,8 +58,6 @@ method BubbleSortStateTransition(state: StateSpace)
 			invariant sortedAtIndex(arr, sortedAbove)
  			invariant forall x :: 0 <= x <= idx ==> arr[x] <= arr[idx]
 		{
-			assert idx <= farthestIdx;
-
 			if(arr[idx] > arr[idx + 1])
 			{
 				arr[idx], arr[idx + 1] := arr[idx + 1], arr[idx];
@@ -80,7 +78,9 @@ function method rho(arr: array<int>) : StateSpace {
 	StateSpace(arr)
 }
 
-function method pi(state: StateSpace) : array<int> {
+function method pi(state: StateSpace) : array<int>
+	reads state.arr
+{
 	state.arr
 }
 
@@ -88,11 +88,9 @@ method Main(){
 	var arr := new int[5];
 	arr[0], arr[1], arr[2], arr[3], arr[4] := 4, 2, 3, 1, 6;
 
-	var sorted := new int[5];
-	sorted[0], sorted[1], sorted[2], sorted[3], sorted[4] := 1, 2, 3, 4, 6;
-
 	var sts := rho(arr);
-	var ss := BubbleSortStateTransition(sts);
+	BubbleSortStateTransition(sts);
+	var sortedArr := pi(sts);
 
-	assert sorted == pi(ss);
+	assert sorted(sortedArr, 0, sortedArr.Length - 1);
 }
