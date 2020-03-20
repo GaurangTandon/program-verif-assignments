@@ -1,6 +1,7 @@
 .vscode
 assignment1/linkedlist.*
 assignment1/product.*
+*.tex
 *~
 *.exe*
 *.bpl

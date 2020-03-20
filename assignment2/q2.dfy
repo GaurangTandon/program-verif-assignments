@@ -1,38 +1,39 @@
 // using nat datatype since fibonacci is always positive
-datatype StateSpace = StateSpace(n: nat, a: nat, b: nat)
+datatype StateSpace = StateSpace(n: nat, i: nat, a: nat, b: nat)
 
 function fib(n: nat) : nat
+	requires n >= 1
 decreases n
 {
-	if (n == 0) then 0 else if (n == 1) then 1 else fib(n - 1) + fib(n - 2)
+	if (n == 1) then 0 else if (n == 2) then 1 else fib(n - 1) + fib(n - 2)
 }
 
 method FibonacciTransitions(currState: StateSpace) returns (finalState: StateSpace)
-	decreases currState.n
-	ensures finalState.n == 0
-	ensures (currState.a == 0 && currState.b == 1) ==> (finalState.a == fib(currState.n) && finalState.b == fib(currState.n + 1))
+	decreases currState.n - currState.i
+	requires 1 <= currState.i <= currState.n
+	ensures finalState.n == finalState.i
+	ensures finalState.a == fib(currState.n)
+	ensures finalState.b == fib(currState.n + 1)
 {
-	var n := currState.n;
-	var a := currState.a;
-	var b := currState.b;
+	var n, i, a, b := currState.n, currState.i, currState.a, currState.b;
 
-	if(n == 0){
+	if(i == n) {
 		finalState := currState;
-	}else{
-		finalState := FibonacciTransitions(StateSpace(n - 1, b, a + b));
+	} else {
+		var nextState := StateSpace(n, i + 1, b, a + b);
+		finalState := FibonacciTransitions(nextState);
 	}
 }
 
-
 function method pi(state: StateSpace): nat
-	requires state.n == 0
 {
 	state.a
 }
 
 function method rho(n: nat) : StateSpace
+	requires n >= 1
 {
-	StateSpace(n, 0, 1)
+	StateSpace(n, 1, 0, 1)
 }
 
 method Main(){

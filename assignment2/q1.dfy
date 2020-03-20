@@ -69,6 +69,9 @@ function method rho(n: nat) : StateSpace
 }
 
 method Main(){
+	assert fib(1) == 0;
+	assert fib(2) == 1;
+
 	var n := 10;
 	var initialState := rho(n);
 	var finalState := FibonacciTransitions(initialState);

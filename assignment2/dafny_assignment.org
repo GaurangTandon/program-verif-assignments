@@ -21,7 +21,7 @@ In this assignment, you should be able to write
 
 Refer the following examples and follow the same format for submission.
 
-* Examples
+
 
 ** Computing max of two numbers
 
@@ -264,13 +264,52 @@ make use of a while / for loop as per the dafny
 syntax.
 
 *** Transition System Definition
+
+1. $S_{fib} = <X,X^{o},U,\rightarrow,Y,h>$
+2. The state space of the system $X = \mathbb{N}
+   \times \mathbb{N} \times \mathbb{N}$
+3. We define a function $\rho:\mathbb{N}
+   \rightarrow X$, which converts the input space
+   of the problem to the state space of the system
+4. $\rho(n) = (n, 0, 1)$, such that $n \ge 1$
+   is the case for the initial state. Hence, $X^o
+   = \rho(n) = (n, 0, 1)$.
+5. U = {next}
+6. Transition Relation:
+  - $(n, a, b) \xrightarrow[\text{next}]{\text{fib}} (n - 1, b, b + a)$, such that $a,b \in \mathbb{N}$
+  - $(1, a, b)$ is terminal state
+7. We define a transition function $t:X \rightarrow X$, and t^n as the n^{th} iteration
+   of function t, where $n \in \mathbb{Z} \land n
+   > 0$ defined by $t^0 = t, t^1 = t \circ t, t^n
+   = t \circ t....(n-1) times....\circ t = t \circ
+   t^{n-1}$
+8. Let X_f be the final state of the system,
+   defined as $X_f = t^n(a, b, c)$ iff $a=1$.  Now t^0
+   corresponds to X^o, and likewise t^n
+   corresponds to X_f. Which means $X^o
+   \xrightarrow[]{*} X_f = t^n$
+9. $Y = \mathbb{N}$, as the view space of the
+   system is equal to the output space of the
+   problem
+10. $h:X \rightarrow Y$, where $h:X \rightarrow \mathbb{N}$
+
 *** Fibonacci Iterative Program
- #+BEGIN_SRC :tangle
+ #+BEGIN_SRC dafny :tangle q1.dfy
 
  #+END_SRC
 
 *** Pre Conditions
+    
+- $n \ge 1$
+- $a = 0$
+- $b = 1$
+
 *** Post Conditions
+    
+- $n = 1$
+- $a = \text{fib(initial.n)}$
+- $b = \text{fib(initial.n + 1)}$
+
 ** Question 2
  Write a recursive program which computes the
  Fibonacci for a given integer. The program should
@@ -278,18 +317,84 @@ syntax.
  appropriate recursive structure.
 
 *** Transition System Definition
+
+1. $S_{fib} = <X,X^{o},U,\rightarrow,Y,h>$
+2. The state space of the system $X = \mathbb{N}
+   \times \mathbb{N} \times \mathbb{N}$
+3. We define a function $\rho:\mathbb{N}
+   \rightarrow X$, which converts the input space
+   of the problem to the state space of the system
+4. $\rho(n) = (n, 1, 0, 1)$, such that $n \ge 1$
+   is the case for the initial state. Hence, $X^o
+   = \rho(n) = (n, 1, 0, 1)$.
+5. U = {next}
+6. Transition Relation:
+  - $(n, i, a, b) \xrightarrow[\text{next}]{\text{fib}} (n, i + 1, b, b + a)$, such that $a,b \in \mathbb{N}$
+  - $(n, n, a, b)$ is terminal state
+7. We define a transition function $t:X \rightarrow X$, and t^n as the n^{th} iteration
+   of function t, where $n \in \mathbb{Z} \land n
+   > 0$ defined by $t^0 = t, t^1 = t \circ t, t^n
+   = t \circ t....(n-1) times....\circ t = t \circ
+   t^{n-1}$
+8. Let X_f be the final state of the system,
+   defined as $X_f = t^n(a, b, c, d)$ iff $a=b$.  Now t^0
+   corresponds to X^o, and likewise t^n
+   corresponds to X_f. Which means $X^o
+   \xrightarrow[]{*} X_f = t^n$
+9. $Y = \mathbb{N}$, as the view space of the
+   system is equal to the output space of the
+   problem
+10. $h:X \rightarrow Y$, where $h:X \rightarrow \mathbb{N}$
+    
+
 *** Fibonacci Recursive Program
  #+BEGIN_SRC :tangle
 
  #+END_SRC
 
 *** Pre Conditions
+
+- $n \ge 1$
+- $i = 1$
+- $a = 0$
+- $b = 1$
+
 *** Post Conditions
+    
+- $n = i = initial.n$
+- $a = \text{fib(initial.n)}$
+- $b = \text{fib(initial.n + 1)}$
+
 ** Question 3
  Write a program for bubble sort which takes input
  as an integer array and produces a sorted array
  using bubble sort algorithm.
 *** Transition System Definition
+    
+1. $S_{fib} = <X,X^{o},U,\rightarrow,Y,h>$
+2. The state space of the system $X = \mathbb{Z}^\mathbb{N} \times \mathbb{N}$ (integer array of natural length)
+3. We define a function $\rho:\mathbb{N} \rightarrow X$, which converts the input space of the problem to the state space of the system
+4. $\rho(n) = (\text{arr}, n)$, such that $n = \text{arr.Length}$
+   is the case for the initial state. Hence, $X^o = \rho(n) = (\text{arr}, n)$.
+5. U = {next}
+6. Transition Relation:
+  - $(\text{arr}, n) \xrightarrow[\text{next}]{\text{sort-pass}} (\text{arr'}, n - 1)$, such that $n \in \mathbb{N}$ and $n \ge 0$
+  - $(\text{arr}, 2)$ is terminal state
+7. We define a transition function $t:X \rightarrow X$, and t^n as the n^{th} iteration
+   of function t, where $n \in \mathbb{Z} \land n
+   > 0$ defined by $t^0 = t, t^1 = t \circ t, t^n
+   = t \circ t....(n-1) times....\circ t = t \circ
+   t^{n-1}$
+8. Let X_f be the final state of the system,
+   defined as $X_f = t^n(\text{arr}, 2)$ such that `arr` is sorted.  Now t^0
+   corresponds to X^o, and likewise t^n
+   corresponds to X_f. Which means $X^o
+   \xrightarrow[]{*} X_f = t^n$
+9. $Y = \mathbb{Z}^\mathbb{N}$, as the view space of the
+   system is equal to the output space of the
+   problem
+10. $h:X \rightarrow Y$, where $h: X \rightarrow \mathbb{Z}^\mathbb{N}$
+
 *** Bubble Sort Program
  #+BEGIN_SRC :tangle
 
