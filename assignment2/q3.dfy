@@ -12,23 +12,12 @@ predicate isPerm(arr: array<int>, barr: array<int>)
 	multiset(arr[..]) == multiset(barr[..])
 }
 
-method max(arr: array<int>, start: int, end: int) returns (mx: int)
-	requires 0 <= start <= end < arr.Length
-	ensures forall x :: start <= x <= end ==> arr[x] <= mx
+// all elements below idx must be smaller than those above
+// and all elmeents above idx must be sorted themselves
+predicate sortedAtIndex(arr: array<int>, idx: int)
+reads arr
 {
-	var idx := start + 1;
-	mx := arr[start];
-
-	while (idx <= end)
-		decreases end - idx
-		invariant idx <= end + 1 <= arr.Length
-		invariant forall x :: start <= x < idx ==> arr[x] <= mx
-	{
-		if arr[idx] > mx {
-			mx := arr[idx];
-		}
-		idx := idx + 1;
-	}
+	forall x, y :: (0 <= x < idx && idx <= y < arr.Length) ==> arr[x] <= arr[y]
 }
 
 // since `arr` was not declared as array?<int>, it will always have
@@ -50,42 +39,35 @@ method bubbleSort(arr: array<int>)
 	// i.e., all elements above and including 1 are sorted
 	// that implies zero-th element is automatically sorted
 	while sortedAbove >= 2
-		decreases sortedAbove
 		invariant 0 <= sortedAbove <= n
-		invariant isPerm(arr, old(arr))
 
-		// all elements below sortedAbove must be smaller than those above
-		// and all elmeents above sortedAbove must be sorted themselves
-		invariant forall x, y :: (0 <= x < sortedAbove && sortedAbove <= y < arr.Length) ==> arr[x] <= arr[y]
+		invariant isPerm(arr, old(arr))
+		invariant sortedAtIndex(arr, sortedAbove)
 		invariant sortedAbove < n ==> sorted(arr, sortedAbove, n - 1)
 	{
 		var idx := 0;
 		var farthestIdx := sortedAbove - 2;
-		var mx := max(arr, 0, farthestIdx + 1);
 
 		while idx <= farthestIdx
-			decreases farthestIdx - idx
 			invariant 0 <= idx <= farthestIdx + 1
 			invariant isPerm(arr, old(arr))
+		  invariant sortedAbove < n ==> sorted(arr, sortedAbove, n - 1)
+			invariant sortedAtIndex(arr, sortedAbove)
  			invariant forall x :: 0 <= x <= idx ==> arr[x] <= arr[idx]
-			invariant arr[idx] <= mx // once fixed merge it with above condition
-		  invariant sortedAbove < n ==> sorted(arr, sortedAbove , n - 1)
 		{
+			assert idx <= farthestIdx;
+
 			if(arr[idx] > arr[idx + 1])
 			{
-				var temp := arr[idx];
-				arr[idx] := arr[idx + 1];
-				arr[idx + 1] := temp;
+				arr[idx], arr[idx + 1] := arr[idx + 1], arr[idx];
 			}
 
 			assert arr[idx] <= arr[idx + 1];
-			assert arr[idx] <= mx;
 			idx := idx + 1;
 		}
 
 		sortedAbove := sortedAbove - 1;
 
-		assert arr[sortedAbove] == mx;
 		assert sortedAbove < n - 1 ==> arr[sortedAbove] <= arr[sortedAbove + 1];
 		assert forall x :: 0 <= x < sortedAbove ==> arr[x] <= arr[sortedAbove];
 	}
