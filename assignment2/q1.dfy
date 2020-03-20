@@ -1,17 +1,25 @@
+/**
+ * Assuminig  
+ * F_1 = 0
+ * F_2 = 1
+*/
+
+	
 // using nat datatype since fibonacci is always positive
 datatype StateSpace = StateSpace(n: nat, a: nat, b: nat)
 
 function fib(n: nat) : nat
-decreases n
+		requires n >= 1
+		decreases n
 {
-	if (n == 0) then 0 else if (n == 1) then 1 else fib(n - 1) + fib(n - 2)
+	if (n == 1) then 0 else if (n == 2) then 1 else fib(n - 1) + fib(n - 2)
 }
 
 method FibonacciTransitions(initialState: StateSpace) returns (finalState: StateSpace)
-	requires initialState.n >= 0
+	requires initialState.n >= 1
 	requires initialState.a == 0
 	requires initialState.b == 1
-	ensures finalState.n == 0
+	ensures finalState.n == 1
 	ensures finalState.a == fib(initialState.n)
 	ensures finalState.b == fib(initialState.n + 1)
 {
@@ -19,12 +27,13 @@ method FibonacciTransitions(initialState: StateSpace) returns (finalState: State
 	var a := initialState.a;
 	var b := initialState.b;
 
-	var i := 0;
-	var nOrg := n;
+	var i := 1;
+	var nOrg := n + 1;
 
-	while n > 0
+	while n > 1
 		// loop measure
 		decreases n
+		invariant n >= 1
 		// we need to help Dafny get sense of
 		// the fact that i == nOrg on loop exit
 		// so that it is sure that a == fib(nOrg)
@@ -41,15 +50,15 @@ method FibonacciTransitions(initialState: StateSpace) returns (finalState: State
 	}
 
 	// just sanity checks
-	assert n == 0;
-	assert i == nOrg;
+	assert n == 1;
+	assert i == nOrg - 1;
 
 	finalState := StateSpace(n, a, b);
 }
 
 
 function method pi(state: StateSpace): nat
-	requires state.n == 0
+	requires state.n == 1
 {
 	state.a
 }
