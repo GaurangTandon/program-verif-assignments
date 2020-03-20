@@ -1,15 +1,9 @@
 // both start and end are indices in the array
 predicate sorted(arr: array<int>, start: int, end: int)
-	requires 0 <= start <= end < arr.Length
 	reads arr
+	requires 0 <= start <= end < arr.Length
 {
 	forall idx :: start <= idx < end ==> arr[idx] <= arr[idx + 1]
-}
-
-predicate isPerm(arr: array<int>, barr: array<int>)
-	reads arr, barr
-{
-	multiset(arr[..]) == multiset(barr[..])
 }
 
 // all elements below idx must be smaller than those above
@@ -27,15 +21,23 @@ datatype StateSpace = StateSpace(arr: array<int>, pass: int)
 	method BubbleSortStateTransition(state: StateSpace) returns (finalState: StateSpace)
 		requires state.arr.Length >= 1
 		requires state.pass == state.arr.Length
-		ensures isPerm(state.arr, old(state.arr))
-		ensures sorted(state.arr, 0, state.arr.Length - 1)
+		ensures finalState.pass == 1
+		ensures finalState.arr.Length == state.arr.Length
+		ensures sorted(finalState.arr, 0, finalState.arr.Length - 1)
 	{
 		var n := state.arr.Length;
 		var newArr := new int[n];
+		
 		var i := 0;
-		while i < n {
+		while i < n
+			invariant i <= newArr.Length
+			invariant forall j :: 0 <= j < i ==> newArr[j] == state.arr[j]
+		{
 			newArr[i] := state.arr[i];
+			i := i + 1;
 		}
+		assert forall i :: 0 <= i < n ==> newArr[i] == state.arr[i];
+
 		// bubble sort for n elements array
 		// requires n-1 passes
 
@@ -46,17 +48,15 @@ datatype StateSpace = StateSpace(arr: array<int>, pass: int)
 		// i.e., all elements above and including 1 are sorted
 		// that implies zero-th element is automatically sorted
 		while sortedAbove >= 2
-		invariant 0 <= sortedAbove <= n
-		invariant isPerm(newArr, old(newArr))
-		invariant sortedAtIndex(newArr, sortedAbove)
-		invariant sortedAbove < n ==> sorted(newArr, sortedAbove, n - 1)
+				invariant 0 <= sortedAbove <= n
+				invariant sortedAtIndex(newArr, sortedAbove)
+				invariant sortedAbove < n ==> sorted(newArr, sortedAbove, n - 1)
 		{
 			var idx := 0;
 			var farthestIdx := sortedAbove - 2;
 
 			while idx <= farthestIdx
 				invariant 0 <= idx <= farthestIdx + 1
-				invariant isPerm(newArr, old(newArr))
 				invariant sortedAbove < n ==> sorted(newArr, sortedAbove, n - 1)
 				invariant sortedAtIndex(newArr, sortedAbove)
 				invariant forall x :: 0 <= x <= idx ==> newArr[x] <= newArr[idx]
@@ -85,7 +85,6 @@ datatype StateSpace = StateSpace(arr: array<int>, pass: int)
 
 	function method pi(state: StateSpace) : array<int>
 		reads state.arr
-		requires state.pass == 1
 	{
 		state.arr
 	}
@@ -98,5 +97,10 @@ datatype StateSpace = StateSpace(arr: array<int>, pass: int)
 		var sts2 := BubbleSortStateTransition(sts);
 		var sortedArr := pi(sts2);
 
+		var i := 0;
+		while i < sortedArr.Length {
+			print sortedArr[i];
+			i := i + 1;
+		}
 		assert sorted(sortedArr, 0, sortedArr.Length - 1);
 	}

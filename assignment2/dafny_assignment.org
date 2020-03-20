@@ -315,7 +315,7 @@ syntax.
  Fibonacci for a given integer. The program should
  *not* make use of a while / for loop. Use
  appropriate recursive structure.
-
+ 
 *** Transition System Definition
 
 1. $S_{fib} = <X,X^{o},U,\rightarrow,Y,h>$
@@ -379,7 +379,7 @@ syntax.
 5. U = {next}
 6. Transition Relation:
   - $(\text{arr}, n) \xrightarrow[\text{next}]{\text{sort-pass}} (\text{arr'}, n - 1)$, such that $n \in \mathbb{N}$ and $n \ge 0$
-  - $(\text{arr}, 2)$ is terminal state
+  - $(\text{arr}, 1)$ is terminal state
 7. We define a transition function $t:X \rightarrow X$, and t^n as the n^{th} iteration
    of function t, where $n \in \mathbb{Z} \land n
    > 0$ defined by $t^0 = t, t^1 = t \circ t, t^n
