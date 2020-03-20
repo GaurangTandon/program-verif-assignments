@@ -20,14 +20,17 @@ reads arr
 	forall x, y :: (0 <= x < idx && idx <= y < arr.Length) ==> arr[x] <= arr[y]
 }
 
+datatype StateSpace = StateSpace(arr: array<int>)
+
 // since `arr` was not declared as array?<int>, it will always have
 // non-null type
-method bubbleSort(arr: array<int>)
-	requires arr.Length >= 1
-	modifies arr
-	ensures isPerm(arr, old(arr))
-	ensures sorted(arr, 0, arr.Length - 1)
+method BubbleSortStateTransition(state: StateSpace)
+	requires state.arr.Length >= 1
+	modifies state.arr
+	ensures isPerm(state.arr, old(state.arr))
+	ensures sorted(state.arr, 0, state.arr.Length - 1)
 {
+	var arr := state.arr;
 	var n := arr.Length;
 	// bubble sort for n elements array
 	// requires n-1 passes
@@ -71,4 +74,25 @@ method bubbleSort(arr: array<int>)
 		assert sortedAbove < n - 1 ==> arr[sortedAbove] <= arr[sortedAbove + 1];
 		assert forall x :: 0 <= x < sortedAbove ==> arr[x] <= arr[sortedAbove];
 	}
+}
+
+function method rho(arr: array<int>) : StateSpace {
+	StateSpace(arr)
+}
+
+function method pi(state: StateSpace) : array<int> {
+	state.arr
+}
+
+method Main(){
+	var arr := new int[5];
+	arr[0], arr[1], arr[2], arr[3], arr[4] := 4, 2, 3, 1, 6;
+
+	var sorted := new int[5];
+	sorted[0], sorted[1], sorted[2], sorted[3], sorted[4] := 1, 2, 3, 4, 6;
+
+	var sts := rho(arr);
+	var ss := BubbleSortStateTransition(sts);
+
+	assert sorted == pi(ss);
 }
