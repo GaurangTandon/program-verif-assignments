@@ -7,18 +7,20 @@ decreases n
 	if (n == 0) then 0 else if (n == 1) then 1 else fib(n - 1) + fib(n - 2)
 }
 
-method FibonacciTransitions(initialState: StateSpace) returns (finalState: StateSpace)
-	requires initialState.n >= 0
-	requires initialState.a == 0
-	requires initialState.b == 1
+method FibonacciTransitions(currState: StateSpace) returns (finalState: StateSpace)
+	decreases currState.n
 	ensures finalState.n == 0
-	ensures finalState.a == fib(initialState.n)
-	ensures finalState.b == fib(initialState.n + 1)
+	ensures (currState.a == 0 && currState.b == 1) ==> (finalState.a == fib(currState.n) && finalState.b == fib(currState.n + 1))
 {
-	var n := initialState.n;
-	var a := initialState.a;
-	var b := initialState.b;
+	var n := currState.n;
+	var a := currState.a;
+	var b := currState.b;
 
+	if(n == 0){
+		finalState := currState;
+	}else{
+		finalState := FibonacciTransitions(StateSpace(n - 1, b, a + b));
+	}
 }
 
 
