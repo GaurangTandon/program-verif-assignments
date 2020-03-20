@@ -11,6 +11,8 @@ decreases n
 method FibonacciTransitions(currState: StateSpace) returns (finalState: StateSpace)
 	decreases currState.n - currState.i
 	requires 1 <= currState.i <= currState.n
+	requires currState.a == fib(currState.i)
+	requires currState.b == fib(currState.i + 1)
 	ensures finalState.n == finalState.i
 	ensures finalState.a == fib(currState.n)
 	ensures finalState.b == fib(currState.n + 1)

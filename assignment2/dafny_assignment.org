@@ -320,7 +320,7 @@ syntax.
 
 1. $S_{fib} = <X,X^{o},U,\rightarrow,Y,h>$
 2. The state space of the system $X = \mathbb{N}
-   \times \mathbb{N} \times \mathbb{N}$
+   \times \mathbb{N}\times \mathbb{N} \times \mathbb{N}$
 3. We define a function $\rho:\mathbb{N}
    \rightarrow X$, which converts the input space
    of the problem to the state space of the system
@@ -329,15 +329,15 @@ syntax.
    = \rho(n) = (n, 1, 0, 1)$.
 5. U = {next}
 6. Transition Relation:
-  - $(n, i, a, b) \xrightarrow[\text{next}]{\text{fib}} (n, i + 1, b, b + a)$, such that $a,b \in \mathbb{N}$
-  - $(n, n, a, b)$ is terminal state
+  - $(n, i, a, b) \xrightarrow[\text{next}]{\text{fib}} (n, i + 1, b, b + a)$, such that $a,b \in \mathbb{N}$ and $a = F_i$ and $b = F_{i+1}$
+  - $(n, n, a, b)$ is terminal state, where $a = F_n$ and $b = F_{n + 1}$
 7. We define a transition function $t:X \rightarrow X$, and t^n as the n^{th} iteration
    of function t, where $n \in \mathbb{Z} \land n
    > 0$ defined by $t^0 = t, t^1 = t \circ t, t^n
    = t \circ t....(n-1) times....\circ t = t \circ
    t^{n-1}$
 8. Let X_f be the final state of the system,
-   defined as $X_f = t^n(a, b, c, d)$ iff $a=b$.  Now t^0
+   defined as $X_f = t^n(a, b, c, d)$ iff $a=b$, $a = F_n$ and $b = F_{n + 1}$.  Now t^0
    corresponds to X^o, and likewise t^n
    corresponds to X_f. Which means $X^o
    \xrightarrow[]{*} X_f = t^n$
@@ -361,7 +361,7 @@ syntax.
 
 *** Post Conditions
     
-- $n = i = initial.n$
+- $n = i = \text{initial.n}$
 - $a = \text{fib(initial.n)}$
 - $b = \text{fib(initial.n + 1)}$
 
