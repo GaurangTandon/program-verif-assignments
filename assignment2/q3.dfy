@@ -46,9 +46,10 @@ method bubbleSort(arr: array<int>)
 	// index above which all heaviest elements are already collected and sorted
 	var sortedAbove := n;
 
-	// stops once sortedAbove == 0
-	// i.e., all elements are sorted
-	while sortedAbove > 0 
+	// stops once sortedAbove == 1
+	// i.e., all elements above and including 1 are sorted
+	// that implies zero-th element is automatically sorted
+	while sortedAbove >= 2
 		decreases sortedAbove
 		invariant 0 <= sortedAbove <= n
 		invariant isPerm(arr, old(arr))
@@ -59,16 +60,15 @@ method bubbleSort(arr: array<int>)
 		invariant sortedAbove < n ==> sorted(arr, sortedAbove, n - 1)
 	{
 		var idx := 0;
-		var mx := max(arr, 0, sortedAbove - 1);
-		assert mx >= arr[idx];
+		var farthestIdx := sortedAbove - 2;
+		var mx := max(arr, 0, farthestIdx + 1);
 
-		while idx < sortedAbove - 1
-			decreases sortedAbove - idx
-			invariant 0 <= idx < sortedAbove 
+		while idx <= farthestIdx
+			decreases farthestIdx - idx
+			invariant 0 <= idx <= farthestIdx + 1
 			invariant isPerm(arr, old(arr))
-			// the following passes assertion A
-			invariant arr[idx] <= mx
- 			invariant forall x :: 0 <= x < idx ==> arr[x] <= arr[idx]
+ 			invariant forall x :: 0 <= x <= idx ==> arr[x] <= arr[idx]
+			invariant arr[idx] <= mx // once fixed merge it with above condition
 		  invariant sortedAbove < n ==> sorted(arr, sortedAbove , n - 1)
 		{
 			if(arr[idx] > arr[idx + 1])
@@ -79,6 +79,7 @@ method bubbleSort(arr: array<int>)
 			}
 
 			assert arr[idx] <= arr[idx + 1];
+			assert arr[idx] <= mx;
 			idx := idx + 1;
 		}
 
@@ -86,6 +87,6 @@ method bubbleSort(arr: array<int>)
 
 		assert arr[sortedAbove] == mx;
 		assert sortedAbove < n - 1 ==> arr[sortedAbove] <= arr[sortedAbove + 1];
-		assert forall x :: 0 <= x < sortedAbove ==> arr[x] <= arr[sortedAbove]; // A
+		assert forall x :: 0 <= x < sortedAbove ==> arr[x] <= arr[sortedAbove];
 	}
 }
