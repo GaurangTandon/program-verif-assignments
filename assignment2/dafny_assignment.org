@@ -378,7 +378,7 @@ syntax.
    is the case for the initial state. Hence, $X^o = \rho(n) = (\text{arr}, n)$.
 5. U = {next}
 6. Transition Relation:
-  - $(\text{arr}, n) \xrightarrow[\text{next}]{\text{sort-pass}} (\text{arr'}, n - 1)$, such that $n \in \mathbb{N}$ and $n \ge 0$
+  - $(\text{arr}, n) \xrightarrow[\text{next}]{\text{sort-pass}} (\text{arr'}, n - 1)$, such that $n \in \mathbb{N}$ and $n \ge 2$ and arr' is such that the last `arr.Length - n + 1` elements in the arr have been sorted in arr', and also they appear contiguously in the last indices of the array. (Basically, this is one succesful completion of a bubble sort pass)
   - $(\text{arr}, 1)$ is terminal state
 7. We define a transition function $t:X \rightarrow X$, and t^n as the n^{th} iteration
    of function t, where $n \in \mathbb{Z} \land n
@@ -401,7 +401,15 @@ syntax.
  #+END_SRC
 
 *** Pre Conditions
+
+- arr.Length $\ge 1$
+- pass $=$ arr.Length
+
 *** Post Conditions
+    
+- pass $= 1$
+- finalState.arr.Length == initialState.arr.Length
+- finalState.arr is sorted first to last index
 
 * Submission Guidelines
 ** Emacs Based Submission
